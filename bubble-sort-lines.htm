@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sorting lines</title>
+    <script src="p5.min.js"></script>
+    <style>
+        html{
+            height: 100%;
+        }
+        body{
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        canvas{
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let lines = [];
+        const thicc = 10;
+
+        function setup(){
+            createCanvas(500, 500);
+            for(let i = 0; i < 500; i+=thicc){
+                lines.push(new Line(i, random(500)));
+            }
+            n = lines.length;
+        }
+
+        class Line{
+            constructor(x,y){
+                this._x = x;
+                this._y = y;
+                this._moving = false;
+            }
+
+            get x(){
+                return this._x;
+            }
+            get y(){
+                return this._y;
+            }
+            get moving(){
+                return this._moving;
+            }
+
+            set x(x){
+                this._x = x;
+            }
+            set y(y){
+                this._y = y;
+            }
+            set moving(m){
+                this._moving = m;
+            }
+
+            draw(){
+                push();
+                fill((this.moving) ? 'green' : 0);
+                rect(this.x, 500, thicc, -this.y);
+                pop();
+            }
+            fix(x, y){
+                this.x = x;
+                this.y = y;
+            }
+        }
+
+        let n = 0;
+        let i = 0;
+        let j = 0;
+        let swap = true;
+
+        function draw(){
+            background(255);
+            noStroke();
+            lines.forEach(l=>l.draw());
+
+            if(swap){
+                let swapped = false;
+                if(j < n-i-1){
+                    if(lines[j].y > lines[j+1].y){
+                        [lines[j], lines[j+1]] = [lines[j+1], lines[j]];
+                        lines.forEach(l => l.moving = false);
+                        lines[j].moving = true;
+                        let posX = lines[j+1].x;
+                        lines[j+1].x = lines[j].x;
+                        lines[j].x = posX;
+                        swapped = true;
+                    }
+                    j++;
+                } else {
+                    j = 0;
+                    i++;
+                }
+                if(i > n && n > 0) swap = false;
+            } else {
+                noLoop(); //bugged ;/
+            }
+        }
+    </script>
+</body>
+</html>
